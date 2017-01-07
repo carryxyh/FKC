@@ -4,6 +4,8 @@
 package dfire.ziyuan;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.pool.KryoFactory;
+import com.esotericsoftware.kryo.pool.KryoPool;
 import dfire.ziyuan.utils.PropertyUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -28,7 +30,7 @@ public class DefaultIncubator<T> implements Incubator<T> {
 
     private GenericObjectPool<ObjectOutputStream> objOutputStreamPool;
 
-    private GenericObjectPool<Kryo> kryoPool;
+    private KryoPool kryoPool;
 
     public DefaultIncubator() {
         init();
@@ -46,11 +48,15 @@ public class DefaultIncubator<T> implements Incubator<T> {
         }));
         GenericObjectPoolConfig objInput = new GenericObjectPoolConfig();
         GenericObjectPoolConfig objOutput = new GenericObjectPoolConfig();
-        GenericObjectPoolConfig kryo = new GenericObjectPoolConfig();
+        //初始化相关池对象
+        kryoPool = new KryoPool.Builder(new KryoFactory() {
+            @Override
+            public Kryo create() {
+                return new Kryo();
+            }
+        }).build();
         PropertyUtils.dealPoolConfig(objInput, SerializerType.OBJ_INPUT);
         PropertyUtils.dealPoolConfig(objOutput, SerializerType.OBJ_OUTPUT);
-        PropertyUtils.dealPoolConfig(kryo, SerializerType.KRYO);
-        
     }
 
     @Override
