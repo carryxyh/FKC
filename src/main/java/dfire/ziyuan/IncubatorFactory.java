@@ -23,7 +23,18 @@ public enum IncubatorFactory {
      *
      * @return
      */
-    public Incubator getIncubator() throws FKCException {
+    public Incubator getDefaultIncubator() throws FKCException {
+        Incubator incubator;
+        ServiceLoader<Incubator> serviceLoader = ServiceLoader.load(Incubator.class);
+        Iterator<Incubator> incubators = serviceLoader.iterator();
+        if (incubators.hasNext()) {
+            incubator = incubators.next();
+            return incubator;
+        }
+        throw new FKCException("没有找到相关的SPI扩展实现,请使用 new DefaultIncubator创建", System.currentTimeMillis());
+    }
+
+    public Incubator getDIYIncubator() throws FKCException {
         Incubator incubator;
         ServiceLoader<Incubator> serviceLoader = ServiceLoader.load(Incubator.class);
         Iterator<Incubator> incubators = serviceLoader.iterator();
