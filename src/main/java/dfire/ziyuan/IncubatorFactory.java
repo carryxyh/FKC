@@ -4,6 +4,7 @@
 package dfire.ziyuan;
 
 import dfire.ziyuan.exceptions.FKCException;
+import dfire.ziyuan.exceptions.FKCExceptionHandler;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -31,17 +32,23 @@ public enum IncubatorFactory {
             incubator = incubators.next();
             return incubator;
         }
-        throw new FKCException("没有找到相关的SPI扩展实现,请使用 new DefaultIncubator创建", System.currentTimeMillis());
+        throw new FKCException("没有找到相关的SPI扩展实现", System.currentTimeMillis());
     }
 
-    public Incubator getDIYIncubator() throws FKCException {
+    /**
+     * 使用java的spi获取一个Incubator
+     *
+     * @return
+     */
+    public Incubator getIncubator(FKCExceptionHandler exceptionHandler) throws FKCException {
         Incubator incubator;
         ServiceLoader<Incubator> serviceLoader = ServiceLoader.load(Incubator.class);
         Iterator<Incubator> incubators = serviceLoader.iterator();
         if (incubators.hasNext()) {
             incubator = incubators.next();
+            incubator.setExceptionHandler(exceptionHandler);
             return incubator;
         }
-        throw new FKCException("没有找到相关的SPI扩展实现,请使用 new DefaultIncubator创建", System.currentTimeMillis());
+        throw new FKCException("没有找到相关的SPI扩展实现", System.currentTimeMillis());
     }
 }
