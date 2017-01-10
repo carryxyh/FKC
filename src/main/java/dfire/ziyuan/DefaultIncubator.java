@@ -8,10 +8,12 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.pool.KryoFactory;
 import dfire.ziyuan.exceptions.DefaultFKCExceptionHandler;
+import dfire.ziyuan.exceptions.FKCException;
 import dfire.ziyuan.exceptions.FKCExceptionHandler;
 import dfire.ziyuan.pool.DefaultIOPoolConfig;
 import dfire.ziyuan.pool.KryoPool;
 import dfire.ziyuan.poolobjfactory.StreamHolderFactory;
+import org.apache.commons.pool2.impl.AbandonedConfig;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
@@ -40,6 +42,10 @@ class DefaultIncubator<T> implements Incubator<T> {
 
     private GenericObjectPool<StreamHolder> holderPool;
 
+    private GenericObjectPoolConfig poolConfig;
+
+    private AbandonedConfig abandonedConfig;
+
     private KryoPool kryoPool;
 
     public DefaultIncubator() {
@@ -50,12 +56,17 @@ class DefaultIncubator<T> implements Incubator<T> {
      * 进行初始化操作
      */
     private void init() {
-        GenericObjectPoolConfig defaultcfg = DefaultIOPoolConfig.getConfig();
+        if (poolConfig == null) {
+            poolConfig = DefaultIOPoolConfig.getConfig();
+        }
+        if (abandonedConfig == null) {
+            abandonedConfig = new AbandonedConfig();
+        }
         if (exceptionHandler == null) {
             exceptionHandler = new DefaultFKCExceptionHandler();
         }
         streamHolderFactory = new StreamHolderFactory(exceptionHandler);
-        holderPool = new GenericObjectPool<StreamHolder>(streamHolderFactory, defaultcfg);
+        holderPool = new GenericObjectPool<StreamHolder>(streamHolderFactory, poolConfig, abandonedConfig);
 
         //初始化相关池对象
         kryoPool = new KryoPool.Builder(new KryoFactory() {
@@ -75,21 +86,29 @@ class DefaultIncubator<T> implements Incubator<T> {
     }
 
     @Override
-    public T born(T template) {
-        Kryo kryo = kryoPool.borrowOne();
+    public T born(T template) throws FKCException {
+        Kryo kryo = null;
+        StreamHolder holder = null;
         try {
-            StreamHolder holder = holderPool.borrowObject();
+            kryo = kryoPool.borrowOne();
+            holder = holderPool.borrowObject();
             ObjectOutputStream oos = holder.getOos();
             Output output = new Output(oos);
             kryo.writeObject(output, template);
-
             ObjectInputStream ois = holder.getOis();
             Input input = new Input(ois);
-            return (T) kryo.readObject(input, template.getClass());
+            T t = (T) kryo.readObject(input, template.getClass());
+            return t;
         } catch (Exception e) {
-            exceptionHandler.dealException(e);
+            throw new FKCException(e.getMessage(), System.currentTimeMillis());
+        } finally {
+            if (kryo != null) {
+                kryoPool.returnOne(kryo);
+            }
+            if (holder != null) {
+                holderPool.returnObject(holder);
+            }
         }
-        return null;
     }
 
     @Override
@@ -98,8 +117,10 @@ class DefaultIncubator<T> implements Incubator<T> {
     }
 
     @Override
-    public void setExceptionHandler(FKCExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
+    public void setIncubatorCfg(IncubatorConfig config) {
+        this.exceptionHandler = config.getExceptionHandler();
+        this.poolConfig = config.getGenericObjectPoolConfig();
+        this.abandonedConfig = config.getAbandonedConfig();
     }
 
     /**

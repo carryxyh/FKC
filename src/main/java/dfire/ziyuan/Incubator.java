@@ -3,7 +3,7 @@
  */
 package dfire.ziyuan;
 
-import dfire.ziyuan.exceptions.FKCExceptionHandler;
+import dfire.ziyuan.exceptions.FKCException;
 
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ public interface Incubator<T> extends Serializable {
      * @param template 模板
      * @return 新的对象
      */
-    T born(T template) throws Exception;
+    T born(T template) throws FKCException;
 
     /**
      * 关闭
@@ -29,9 +29,9 @@ public interface Incubator<T> extends Serializable {
     void shutdown();
 
     /**
-     * 给incubator设置异常处理器
+     * 给incubator设置config
      *
-     * @param exceptionHandler
+     * @param config
      */
-    void setExceptionHandler(FKCExceptionHandler exceptionHandler);
+    void setIncubatorCfg(IncubatorConfig config);
 }

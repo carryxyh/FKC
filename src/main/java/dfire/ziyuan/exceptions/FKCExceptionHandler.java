@@ -13,5 +13,10 @@ import java.io.Serializable;
  */
 public interface FKCExceptionHandler extends Serializable {
 
+    /**
+     * 处理异常
+     *
+     * @param e
+     */
     void dealException(Exception e);
 }
