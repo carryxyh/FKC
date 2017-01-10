@@ -21,6 +21,16 @@ public class IncubatorConfig {
 
     private AbandonedConfig abandonedConfig;
 
+    private KryoPoolConfig kryoPoolConfig;
+
+    public KryoPoolConfig getKryoPoolConfig() {
+        return kryoPoolConfig;
+    }
+
+    public void setKryoPoolConfig(KryoPoolConfig kryoPoolConfig) {
+        this.kryoPoolConfig = kryoPoolConfig;
+    }
+
     public FKCExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }

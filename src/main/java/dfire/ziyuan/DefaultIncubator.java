@@ -48,6 +48,8 @@ class DefaultIncubator<T> implements Incubator<T> {
 
     private KryoPool kryoPool;
 
+    private KryoPoolConfig kryoPoolConfig;
+
     public DefaultIncubator() {
         init();
     }
@@ -65,16 +67,24 @@ class DefaultIncubator<T> implements Incubator<T> {
         if (exceptionHandler == null) {
             exceptionHandler = new DefaultFKCExceptionHandler();
         }
+        if (kryoPoolConfig == null) {
+            //初始化相关池对象
+            kryoPool = new KryoPool.Builder(new KryoFactory() {
+                @Override
+                public Kryo create() {
+                    return new Kryo();
+                }
+            }).isQueueSoftRef(true).build();
+        } else {
+            kryoPool = new KryoPool.Builder(new KryoFactory() {
+                @Override
+                public Kryo create() {
+                    return new Kryo();
+                }
+            }).isQueueSoftRef(kryoPoolConfig.isUseSoftRefQueue()).queue(kryoPoolConfig.getCacheQueue()).build();
+        }
         streamHolderFactory = new StreamHolderFactory(exceptionHandler);
         holderPool = new GenericObjectPool<StreamHolder>(streamHolderFactory, poolConfig, abandonedConfig);
-
-        //初始化相关池对象
-        kryoPool = new KryoPool.Builder(new KryoFactory() {
-            @Override
-            public Kryo create() {
-                return new Kryo();
-            }
-        }).isQueueSoftRef(true).build();
 
         //初始化的时候先设置好钩子,防止使用的时候忘记关闭
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -121,6 +131,7 @@ class DefaultIncubator<T> implements Incubator<T> {
         this.exceptionHandler = config.getExceptionHandler();
         this.poolConfig = config.getGenericObjectPoolConfig();
         this.abandonedConfig = config.getAbandonedConfig();
+        this.kryoPoolConfig = config.getKryoPoolConfig();
     }
 
     /**
