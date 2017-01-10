@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author ziyuan
  * @since 2017-01-06
  */
-class DefaultIncubator<T> implements Incubator<T> {
+public class DefaultIncubator<T> implements Incubator<T> {
 
     /**
      * 是否是关闭了的
