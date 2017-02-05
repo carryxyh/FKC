@@ -54,7 +54,7 @@ public class StreamHolderFactory implements PooledObjectFactory<StreamHolder> {
     public void passivateObject(PooledObject<StreamHolder> p) throws Exception {
         StreamHolder holder = p.getObject();
         try {
-            holder.closeHolder();
+            holder.resetHolder();
         } catch (Exception e) {
             exceptionHandler.dealException(e);
         }

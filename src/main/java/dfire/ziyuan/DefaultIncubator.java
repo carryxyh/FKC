@@ -48,6 +48,8 @@ public class DefaultIncubator<T> implements Incubator<T> {
 
     private KryoPool kryoPool;
 
+    private KryoHolder kryoHolder;
+
     private KryoPoolConfig kryoPoolConfig;
 
     public DefaultIncubator() {
@@ -83,6 +85,7 @@ public class DefaultIncubator<T> implements Incubator<T> {
                 }
             }).isQueueSoftRef(kryoPoolConfig.isUseSoftRefQueue()).queue(kryoPoolConfig.getCacheQueue()).build();
         }
+        kryoHolder = new KryoHolder(kryoPool);
         streamHolderFactory = new StreamHolderFactory(exceptionHandler);
         holderPool = new GenericObjectPool<StreamHolder>(streamHolderFactory, poolConfig, abandonedConfig);
 
@@ -100,7 +103,7 @@ public class DefaultIncubator<T> implements Incubator<T> {
         Kryo kryo = null;
         StreamHolder holder = null;
         try {
-            kryo = kryoPool.borrowOne();
+            kryo = kryoHolder.get();
             holder = holderPool.borrowObject();
             ObjectOutputStream oos = holder.getOos();
             Output output = new Output(oos);

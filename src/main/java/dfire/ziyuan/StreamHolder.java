@@ -34,29 +34,35 @@ public class StreamHolder {
         ois = new ObjectInputStream(bais);
     }
 
-    public void closeHolder() throws Exception {
+    public void resetHolder() throws Exception {
         if (bais != null) {
-            bais.close();
+            bais.reset();
         }
         if (baos != null) {
-            baos.close();
-        }
-        if (ois != null) {
-            ois.close();
-        }
-        if (oos != null) {
-            oos.close();
+            baos.reset();
         }
     }
 
     /**
      * help gc
      */
-    public void destroyHolder() {
-        this.bais = null;
-        this.baos = null;
-        this.ois = null;
-        this.oos = null;
+    public void destroyHolder() throws Exception {
+        if (bais != null) {
+            bais.close();
+            bais = null;
+        }
+        if (baos != null) {
+            baos.close();
+            baos = null;
+        }
+        if (ois != null) {
+            ois.close();
+            ois = null;
+        }
+        if (oos != null) {
+            oos.close();
+            oos = null;
+        }
     }
 
     public ObjectInputStream getOis() {
