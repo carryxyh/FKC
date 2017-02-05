@@ -4,7 +4,6 @@
 package dfire.ziyuan;
 
 import com.esotericsoftware.kryo.Kryo;
-import dfire.ziyuan.exceptions.FKCException;
 import dfire.ziyuan.pool.KryoPool;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -65,9 +64,17 @@ public class DefaultIncubator<T> implements Incubator<T> {
     }
 
     @Override
-    public T born(T template) throws FKCException {
-        Kryo kryo = kryoPool.borrowOne();
-        return kryo.copy(template);
+    public T born(T template) {
+        Kryo kryo = null;
+        try {
+            kryo = kryoPool.borrowOne();
+            if (kryo == null) {
+                return null;
+            }
+            return kryo.copy(template);
+        } finally {
+            kryoPool.returnOne(kryo);
+        }
     }
 
     @Override
