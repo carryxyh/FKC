@@ -26,7 +26,7 @@ public class AppTest {
         t1.setChildItems(childs);
         t1.setMemo("test memo");
         t2.setMenuId("dfasjfasdjlkasdfjlk");
-        Incubator<Item> incubator = IncubatorFactory.INSTANCE.getDefaultIncubator();
+        Incubator<Item> incubator = IncubatorFactory.INSTANCE.getIncubator();
         Item newOne = incubator.born(t1);
         System.out.println(newOne);
         System.out.println(newOne.getChildItems().get(0));

@@ -6,6 +6,10 @@ package dfire.ziyuan.pool;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.pool.KryoCallback;
 import com.esotericsoftware.kryo.pool.KryoFactory;
+import dfire.ziyuan.exceptions.FKCExceptionHandler;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.AbandonedConfig;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -46,7 +50,7 @@ public interface KryoPool {
      */
     void close();
 
-    class Builder {
+    class QueueBuilder {
 
         /**
          * kryofactory
@@ -63,14 +67,14 @@ public interface KryoPool {
          */
         private boolean isQueueSoftRef;
 
-        public Builder(KryoFactory factory) {
+        public QueueBuilder(KryoFactory factory) {
             if (factory == null) {
                 throw new IllegalArgumentException("factory must not be null");
             }
             this.factory = factory;
         }
 
-        public Builder queue(Queue<Kryo> queue) {
+        public QueueBuilder queue(Queue<Kryo> queue) {
             if (queue == null) {
                 throw new IllegalArgumentException("queue must not be null");
             }
@@ -78,7 +82,7 @@ public interface KryoPool {
             return this;
         }
 
-        public Builder isQueueSoftRef(boolean isQueueSoftRef) {
+        public QueueBuilder isQueueSoftRef(boolean isQueueSoftRef) {
             this.isQueueSoftRef = isQueueSoftRef;
             return this;
         }
@@ -91,6 +95,43 @@ public interface KryoPool {
         @Override
         public String toString() {
             return getClass().getName() + "[queue.class=" + queue.getClass() + ", softReferences=" + isQueueSoftRef + "]";
+        }
+    }
+
+    class CommonsBuilder {
+
+        private final PooledObjectFactory<Kryo> pooledObjectFactory;
+
+        private GenericObjectPoolConfig genericObjectPoolConfig;
+
+        private AbandonedConfig abandonedConfig;
+
+        private FKCExceptionHandler fkcExceptionHandler;
+
+        public CommonsBuilder(PooledObjectFactory<Kryo> kryoPooledObjectFactory) {
+            if (kryoPooledObjectFactory == null) {
+                throw new IllegalArgumentException("pooledObjectFactory must not be null");
+            }
+            this.pooledObjectFactory = kryoPooledObjectFactory;
+        }
+
+        public CommonsBuilder config(GenericObjectPoolConfig genericObjectPoolConfig) {
+            this.genericObjectPoolConfig = genericObjectPoolConfig;
+            return this;
+        }
+
+        public CommonsBuilder abandonedStrategy(AbandonedConfig abandonedConfig) {
+            this.abandonedConfig = abandonedConfig;
+            return this;
+        }
+
+        public CommonsBuilder exceptionHandler(FKCExceptionHandler fkcExceptionHandler) {
+            this.fkcExceptionHandler = fkcExceptionHandler;
+            return this;
+        }
+
+        public KryoPool build() {
+            return new KryoPoolCommonsImpl(this.genericObjectPoolConfig, this.pooledObjectFactory, this.abandonedConfig, this.fkcExceptionHandler);
         }
     }
 }

@@ -19,17 +19,5 @@ public class TestBorn extends BaseTest {
 
     @Test
     public void testborn() throws FKCException {
-        Item t1 = new Item();
-        List<Item> childs = new ArrayList<>();
-        Item t2 = new Item();
-        childs.add(t2);
-        t1.setChildItems(childs);
-        t1.setMemo("test memo");
-        t2.setMenuId("dfasjfasdjlkasdfjlk");
-        Incubator<Item> incubator = IncubatorFactory.INSTANCE.getDefaultIncubator();
-        Item newOne = incubator.born(t1);
-        System.out.println(newOne);
-        System.out.println(newOne.getChildItems().get(0));
     }
-
 }

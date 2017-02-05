@@ -23,7 +23,7 @@ public enum IncubatorFactory {
      *
      * @return
      */
-    public Incubator getDefaultIncubator() throws FKCException {
+    public Incubator getIncubator() throws FKCException {
         Incubator incubator;
         ServiceLoader<Incubator> serviceLoader = ServiceLoader.load(Incubator.class);
         Iterator<Incubator> incubators = serviceLoader.iterator();
@@ -39,13 +39,14 @@ public enum IncubatorFactory {
      *
      * @return
      */
-    public Incubator getDIYIncubator(IncubatorConfig config) throws FKCException {
+    public Incubator getIncubator(KryoPoolConfig kryoPoolConfig) throws FKCException {
         Incubator incubator;
         ServiceLoader<Incubator> serviceLoader = ServiceLoader.load(Incubator.class);
         Iterator<Incubator> incubators = serviceLoader.iterator();
         if (incubators.hasNext()) {
             incubator = incubators.next();
-            incubator.setIncubatorCfg(config);
+            //这里考虑有没有更好的实现方式
+            ((DefaultIncubator) incubator).setKryoPoolConfig(kryoPoolConfig);
             return incubator;
         }
         throw new FKCException("没有找到相关的SPI扩展实现", System.currentTimeMillis());

@@ -27,11 +27,4 @@ public interface Incubator<T> extends Serializable {
      * 关闭
      */
     void shutdown();
-
-    /**
-     * 给incubator设置config
-     *
-     * @param config
-     */
-    void setIncubatorCfg(IncubatorConfig config);
 }
