@@ -38,3 +38,23 @@ A theNewOne = incubator.born(a);
 第一种：仍然是**queue**的实现方式，这种方式比较轻量，但是不如第二种方式更加完善（**默认采用这种方式**）.<br/>
 第二种：**二次封装了apache-commons的genericObjectPool**，并加入了防泄漏策略，调用方可以自己定义一些防泄漏策略。<br/>
 **（3）**注释完善<br/>
+**（4）**关于使用apache-commons实现kryoPool时的一些自定义扩展：<br/>
+已cart-soa的使用场景为例，该插件主要是用来深克隆Item。在插件的***poolobjfactory***包中实现了一个Adapter，那么建议自己实现一个类集成自Adapter，然后重写掉***makeObject***方法。<br/>
+```
+@Override
+public PooledObject<Kryo> makeObject() throws Exception {
+	Kryo kryo = new Kryo();
+	kryo.register(Item.class);
+	return new DefaultPooledObject<>(kryo);
+}
+```
+这就在kryo生产出来的时候直接在kryo中注册了Item的class信息，通过阅读源码，这样可以在第一次使用这个生产出来的kryo时，减少操作。<br/>
+如果有需要可以自定义**Serializer（继承自kryo的包中的Serializer）**，大部分情况下（包括默认情况下）使用的都是kryo中提供的**FieldSerializer**，所以可以进一步把代码给处理成这样：<br/>
+```
+@Override
+public PooledObject<Kryo> makeObject() throws Exception {
+	Kryo kryo = new Kryo();
+	kryo.register(Item.class, new FieldSerializer(kryo, Item.class));
+	return new DefaultPooledObject<>(kryo);
+}
+```
