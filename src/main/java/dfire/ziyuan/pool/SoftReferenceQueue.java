@@ -7,6 +7,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Queue;
 
+/**
+ * SoftReferenceQueue 软引用队列,在kryo特别多的时候不至于造成OOM
+ *
+ * @author ziyuan
+ * @since 2017-02-05
+ */
 class SoftReferenceQueue implements Queue<Kryo> {
 
     private Queue<SoftReference<Kryo>> delegate;

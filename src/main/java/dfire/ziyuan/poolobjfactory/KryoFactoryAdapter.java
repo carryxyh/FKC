@@ -9,7 +9,7 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 /**
- * KryoFactoryAdapter
+ * KryoFactoryAdapter 如果有需要可以继承该Adapter进行相应的重写,这里只提供了一个默认的实现方式
  *
  * @author ziyuan
  * @since 2017-02-05

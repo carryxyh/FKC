@@ -45,13 +45,18 @@ public class KryoPoolCommonsImpl implements KryoPool {
 
     @Override
     public <T> T run(KryoCallback<T> callback) {
+        Kryo kryo = null;
         try {
-            Kryo kryo = kryoPool.borrowObject();
-            callback.execute(kryo);
+            kryo = kryoPool.borrowObject();
+            return callback.execute(kryo);
         } catch (Exception e) {
             fkcExceptionHandler.dealException(e);
+            return null;
+        } finally {
+            if (kryo != null) {
+                kryoPool.returnObject(kryo);
+            }
         }
-        return null;
     }
 
     @Override

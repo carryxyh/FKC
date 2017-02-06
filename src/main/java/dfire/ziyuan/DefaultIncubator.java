@@ -21,8 +21,14 @@ public class DefaultIncubator<T> implements Incubator<T> {
      */
     private boolean isClosed = false;
 
+    /**
+     * reentrantlock
+     */
     private final ReentrantLock lock = new ReentrantLock(false);
 
+    /**
+     * 真正的kryo池
+     */
     private KryoPool kryoPool;
 
     /**
