@@ -39,7 +39,7 @@ A theNewOne = incubator.born(a);
 第二种：**二次封装了apache-commons的genericObjectPool**，并加入了防泄漏策略，调用方可以自己定义一些防泄漏策略。<br/>
 **（3）**注释完善<br/>
 **（4）**关于使用apache-commons实现kryoPool时的一些自定义扩展：<br/>
-已cart-soa的使用场景为例，该插件主要是用来深克隆Item。在插件的***poolobjfactory***包中实现了一个Adapter，那么建议自己实现一个类集成自Adapter，然后重写掉***makeObject***方法。<br/>
+以cart-soa的使用场景为例，该插件主要是用来深克隆Item。在插件的***poolobjfactory***包中实现了一个Adapter，那么建议自己实现一个类集成自Adapter，然后重写掉***makeObject***方法。<br/>
 ```
 @Override
 public PooledObject<Kryo> makeObject() throws Exception {
