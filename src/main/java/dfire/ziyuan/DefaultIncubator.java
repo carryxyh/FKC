@@ -74,6 +74,7 @@ public class DefaultIncubator<T> implements Incubator<T> {
         Kryo kryo = null;
         try {
             kryo = kryoPool.borrowOne();
+//            System.out.println("i am kryo address : " + kryo);
             if (kryo == null) {
                 return null;
             }
