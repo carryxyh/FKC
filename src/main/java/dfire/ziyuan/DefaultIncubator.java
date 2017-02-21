@@ -4,6 +4,7 @@
 package dfire.ziyuan;
 
 import com.esotericsoftware.kryo.Kryo;
+import dfire.ziyuan.exceptions.FKCException;
 import dfire.ziyuan.pool.KryoPool;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -70,7 +71,10 @@ public class DefaultIncubator<T> implements Incubator<T> {
     }
 
     @Override
-    public T born(T template) {
+    public T born(T template) throws FKCException {
+        if (isClosed) {
+            throw new FKCException("Incubator has been closed !", System.currentTimeMillis());
+        }
         Kryo kryo = null;
         try {
             kryo = kryoPool.borrowOne();
@@ -86,6 +90,9 @@ public class DefaultIncubator<T> implements Incubator<T> {
 
     @Override
     public void shutdown() {
+        if (isClosed) {
+            return;
+        }
         doShutDown();
     }
 
