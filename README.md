@@ -58,3 +58,10 @@ public PooledObject<Kryo> makeObject() throws Exception {
 	return new DefaultPooledObject<>(kryo);
 }
 ```
+##### 总结一下kryo和hessian的优劣，摘抄自大神的文章：
+从序列化后的字节可以看出以下几点：
+1、Kryo序列化后比Hessian小很多。（kryo优于hessian）
+2、由于Kryo没有将类field的描述信息序列化，所以Kryo需要以自己加载该类的filed。这意味着如果该类没有在kryo中注册，或者该类是第一次被kryo序列化时，kryo需要时间去加载该类（hessian优于kryo）
+3、由于2的原因，如果该类已经被kryo加载过，那么kryo保存了其类的信息，就可以很快的将byte数组填入到类的field中,而hessian则需要解析序列化后的byte数组中的field信息，对于序列化过的类，kryo优于hessian。
+4、hessian使用了固定长度存储int和long，而kryo则使用的变长，实际中，很大的数据不会经常出现。(kryo优于hessian)
+5、hessian将序列化的字段长度写入来确定一段field的结束，而kryo对于String将其最后一位byte+x70用于标识结束（kryo优于hessian）
