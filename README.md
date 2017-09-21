@@ -59,6 +59,24 @@ public PooledObject<Kryo> makeObject() throws Exception {
 }
 ```
 
+官方文档上还提供了更好的预处理方式：
+```
+    Kryo kryo = new Kryo();
+    FieldSerializer someClassSerializer = new FieldSerializer(kryo, SomeClass.class);
+    CollectionSerializer listSerializer = new CollectionSerializer();
+    listSerializer.setElementClass(String.class, kryo.getSerializer(String.class));
+    listSerializer.setElementsCanBeNull(false);
+    someClassSerializer.getField("list").setClass(LinkedList.class, listSerializer);
+    kryo.register(SomeClass.class, someClassSerializer);
+    // ...
+    SomeClass someObject = ...
+    someObject.list = new LinkedList();
+    someObject.list.add("thishitis");
+    someObject.list.add("bananas");
+    kryo.writeObject(output, someObject);
+```
+不多说了，这就是更精确到每个字段使用的Serializer，并且标识这个集合中的类型。官方文档上说这能够省略1-2个字节每个元素。
+
 ##### 总结一下kryo和hessian的优劣，摘抄自大神的文章：
 从序列化后的字节可以看出以下几点：
 1. Kryo序列化后比Hessian小很多。（kryo优于hessian）
