@@ -6,6 +6,7 @@ package dfire.ziyuan;
 import dfire.ziyuan.exceptions.FKCException;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class TestBorn extends BaseTest {
 
     @Test
-    public void testborn() throws FKCException {
+    public void testborn() throws FKCException, IOException {
         Item t1 = new Item();
         List<Item> childs = new ArrayList<>();
         Item t2 = new Item();
@@ -42,6 +43,11 @@ public class TestBorn extends BaseTest {
         Item newOne2 = incubator.born(t1);
         Item newOne3 = incubator.born(t1);
         System.out.println(newOne);
+        System.out.println(newOne1);
+        System.out.println(newOne2);
+        System.out.println(newOne3);
         System.out.println(newOne.getChildItems().get(0));
+
+        System.in.read();
     }
 }
