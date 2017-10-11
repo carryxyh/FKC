@@ -1,10 +1,6 @@
 import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * 接口注解，用于ValidatorAspect 对有使用此注解的接口进行拦截
- * Created by zhuxh on 14/12/3.
- */
 @java.lang.annotation.Target({ElementType.METHOD})
 @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
 public @interface Validator {
@@ -32,10 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by zhuxh on 14/12/3.
- * 接口验证类
- */
 @Service
 @Aspect
 public class ValidatorAspect {
@@ -157,10 +149,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Created by zhuxh on 14/12/4.
- * 参数规则验证明细项
- */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Check {
