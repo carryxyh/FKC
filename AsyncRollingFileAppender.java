@@ -8,9 +8,6 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * 异步日志处理
- *
- * @author gouqi<gouqi@2dfire.com>
- * @date 2016/4/11.
  */
 public class AsyncRollingFileAppender extends RollingFileAppender<ILoggingEvent> {
 

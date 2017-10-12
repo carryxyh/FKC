@@ -22,8 +22,6 @@ import java.io.IOException;
  *    &lt;appender-ref ref="foo" /&gt;
  * &lt;/logger&gt;
  * </pre></code>
- * 
- * @author ding.lid
  */
 @Activate(group = Constants.PROVIDER, value = Constants.ACCESS_LOG_KEY)
 public class AccessLogRotateFilter implements Filter {
