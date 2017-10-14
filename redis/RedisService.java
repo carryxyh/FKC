@@ -6,10 +6,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 
-/**
- * Created with IntelliJ IDEA. User: binglang Date: 16-06-17 Time: 下午3:42 To change this template use File | Settings |
- * File Templates.
- */
 public class RedisService extends RedisBaseService {
 
     private String ip;

@@ -10,10 +10,6 @@ import redis.clients.util.Pool;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA. User: binglang Date: 16-06-17 Time: 下午3:42 To change this template use File | Settings |
- * File Templates.
- */
 public abstract class RedisBaseService implements ICacheService {
 
     private static final Log    logger                        = LogFactory.getLog(RedisBaseService.class);

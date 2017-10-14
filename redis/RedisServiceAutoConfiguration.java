@@ -38,9 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by haoks on 8/30/16.
- */
 @Configuration
 @ConditionalOnClass({ JedisConnection.class, RedisOperations.class, Jedis.class ,RedisSentinelService.class})
 public class RedisServiceAutoConfiguration {
