@@ -47,7 +47,6 @@ public class TestBorn extends BaseTest {
         System.out.println(newOne2);
         System.out.println(newOne3);
         System.out.println(newOne.getChildItems().get(0));
-
         System.in.read();
     }
 }
